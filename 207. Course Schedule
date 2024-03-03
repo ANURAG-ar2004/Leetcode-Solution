@@ -1,0 +1,23 @@
+class Solution {
+public:
+   vector<int>circle;
+    bool dfs(vector<int> adj[], int s){
+        if(circle[s] != 0) return circle[s]==1;  //already visited so either in circle or not
+        circle[s]= -1;  // first time visit so assume as may be in circle
+        
+        for(auto u: adj[s])
+            if(dfs(adj, u)==false) return false;  // if u is in circle then s must be in circle
+        circle[s]= 1;  // if not return false then  src must not be in circle so update as 1 
+        return true; // return true because not in circle
+    }
+    bool canFinish(int n, vector<vector<int>>& pre){
+        int m= pre.size();
+        circle.resize(n, 0);
+        vector<int> adj[n];
+        for(int i=0; i<m; i++) 
+            adj[pre[i][1]].push_back(pre[i][0]);
+        for(int i=0; i<n; i++)
+            if(dfs(adj, i)== false) return false;
+        return true;
+    }
+};
