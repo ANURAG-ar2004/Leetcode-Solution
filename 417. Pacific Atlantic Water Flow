@@ -1,0 +1,135 @@
+-----------------------------------------Two different approaches foe solving this problem------------------------------------
+
+// class Solution {
+// public:
+//     vector<vector<int>>res;
+//     void pacificRim(vector<vector<int>>& heights, int r, int c, vector<vector<int>>& grid){
+//         int R = heights.size(); //rows
+//         int C = heights[0].size(); //columns
+//         if(grid[r][c]==1)return;
+//         grid[r][c]=1;
+
+//         int dr[4]={-1,1,0,0};
+//         int dc[4]={0,0,-1,1};
+//         for(int i=0; i<4; i++){
+//             int rr=r+dr[i];
+//             int cc=c+dc[i];
+//             if(rr>=0 && cc>=0 && rr<R && cc<C && heights[rr][cc]>=heights[r][c]){
+//                  pacificRim(heights, rr, cc, grid);
+//             }
+//         }
+//     }
+
+//         void atlanticRim(vector<vector<int>>& heights, int r, int c, vector<vector<int>>& grid){
+//         int R = heights.size();
+//         int C = heights[0].size(); 
+//         if(grid[r][c]==1){
+//             res.push_back({r,c});
+//         }
+//         if(grid[r][c]=2)return;
+//         grid[r][c]=2;
+
+//         int dr[4]={-1,1,0,0};
+//         int dc[4]={0,0,-1,1};
+//         for(int i=0; i<4; i++){
+//             int rr=r+dr[i];
+//             int cc=c+dc[i];
+//             if(rr>=0 && cc>=0 && rr<R && cc<C && heights[rr][cc]>=heights[r][c]){
+//                  atlanticRim(heights, rr, cc, grid);
+//             }
+//         }
+//     }
+
+//     vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {
+//         int R = heights.size(); 
+//         int C = heights[0].size(); 
+//         if(R==0){
+//             return res;
+//         }
+//         vector<vector<int>>grid(R, vector<int>(C,0));
+//         for(int i=0; i<R; i++){
+//             for(int j=0; j<C; i++){
+//                 if(i==0 || j==0){
+//                     pacificRim(heights, i, j, grid);
+//                 }
+//             }
+//         }
+//          for(int i=0; i<R; i++){
+//             for(int j=0; j<C; i++){
+//                 if(i==R-1 || j==C-1){
+//                     atlanticRim(heights, i, j, grid);
+//                 }
+//             }
+//         }
+//         return res;
+//     }
+// };
+
+---------------------------------------------------------------Another Approach----------------------------
+
+class Solution {
+public:
+    
+    
+    void dfs(vector<vector<int>>& heights, vector<vector<int>>& vis, int m, int n, int r, int c){
+        // base cond.
+        if(r < 0 || c < 0 || r == m || c == n || vis[r][c] == 1){
+            return;
+        }
+        
+        // visit
+        vis[r][c] = 1;
+        
+        // dfs calls
+        if(r-1 >= 0 &&  heights[r-1][c] >= heights[r][c]) dfs(heights, vis, m, n, r-1, c);
+        if(c-1 >= 0 &&  heights[r][c-1] >= heights[r][c]) dfs(heights, vis, m, n, r, c-1);
+        if(r+1 < m &&  heights[r+1][c] >= heights[r][c]) dfs(heights, vis, m, n, r+1, c);
+        if(c+1 < n &&  heights[r][c+1] >= heights[r][c]) dfs(heights, vis, m, n, r, c+1);
+    }
+    
+    vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {
+        int m = heights.size();
+        int n = heights[0].size();
+        
+        vector<vector<int>> res;
+        
+        
+        // pacific
+        vector<vector<int>> P (m, vector<int> (n));
+        
+        // atlantic
+        vector<vector<int>> A (m, vector<int> (n));
+        
+        // dfs on columns
+        for(int i = 0; i < n; i++){
+           
+            // for pacific
+            dfs(heights, P, m, n, 0, i);
+            
+            // for atlantic
+            dfs(heights, A, m, n, m-1, i);
+        }
+        
+        // dfs on rows
+        for(int i = 0; i < m; i++){
+            
+            // for pacific
+            dfs(heights, P, m, n, i, 0);
+            
+            // for atlantic
+            dfs(heights, A, m, n, i, n-1);
+        }
+        
+        
+        // checking for intersection
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                if(P[i][j] && A[i][j]){
+                    res.push_back({i, j});
+                }
+            }
+        }
+        
+        return res;
+    }
+};
