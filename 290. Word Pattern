@@ -1,0 +1,26 @@
+class Solution {
+public:
+    bool wordPattern(string pattern, string s) {
+        stringstream ss(s);
+        vector<string> v;
+        while (getline(ss, s, ' ')) {
+            v.push_back(s);
+    }
+
+    if(pattern.length() != v.size()){
+        return false;
+    }
+
+    unordered_map<char, int> res1;
+    unordered_map<string, int> res2;
+
+    for(int i=0; i<pattern.size(); ++i){
+        if(res1[pattern[i]] != res2[v[i]]){
+            return false;
+        }
+        res1[pattern[i]] = res2[v[i]] = i+4;
+    }
+
+    return true;
+}
+};
