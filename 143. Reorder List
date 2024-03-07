@@ -1,0 +1,26 @@
+class Solution {
+public:
+   void reorderList(ListNode* head) {
+    if (head == nullptr || head->next == nullptr) {
+        return;
+    }
+
+    vector<ListNode*> nodes{};
+    while (head) {
+        nodes.push_back(head);
+        head = head->next;
+    }
+
+    auto start = nodes.begin();
+    auto end = nodes.end() - 1;
+
+    while (start < end) {
+        (*(end - 1))->next = nullptr;
+        (*end)->next = (*start)->next;
+        (*start)->next = *end;
+        end--;
+        start++;
+    }
+}
+
+};
